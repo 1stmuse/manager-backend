@@ -1,34 +1,30 @@
-const express = require('express');
-const bodyParser= require('body-parser');
-const cors = require('cors')
-const mongoose= require('mongoose')
-const path = require('path')
-
-require('dotenv').config();
-
-const app = express()
-const port= process.env.PORT || 2000
-
-// app.use(bodyParser)
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const path = require("path");
+const apiRouter = require("./routes/index.js");
+require("dotenv").config();
+const app = express();
+const port = process.env.PORT || 2000;
 app.use(cors());
-app.use(express.json());
-app.use(express.static(path.resolve(__dirname,"public/build")))
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api", apiRouter);
 
 // const uri= 'mongodb+srv://muse_1st:akinn@cluster0-d1txe.mongodb.net/test?retryWrites=true&w=majority';
-const uri=process.env.ATLAS_URI
-mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology:true});
-const connection=mongoose.connection;
-connection.once('open', ()=>{
-    console.log('connected')
-})
+const uri = process.env.ATLAS_URI;
+console.log(uri);
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const connection = mongoose.connection;
+connection.once("open", () => {
+  console.log("connected");
+});
 
-const playerRouter = require('./routes/player');
-const managerRouter = require('./routes/manager');
-
-app.use('/players', playerRouter);
-app.use('/managers', managerRouter)
-
-
-app.listen(port, ()=>{
-    console.log('server running')
+app.use(express.static(path.join(__dirname, "public/build")));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./public/build/index.html"));
+});
+app.listen(port, () => {
+  console.log("server running");
 });
