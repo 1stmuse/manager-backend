@@ -12,7 +12,6 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", apiRouter);
 
-// const uri= 'mongodb+srv://muse_1st:akinn@cluster0-d1txe.mongodb.net/test?retryWrites=true&w=majority';
 const uri = process.env.ATLAS_URI;
 console.log(uri);
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
